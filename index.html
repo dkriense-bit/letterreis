@@ -150,7 +150,8 @@ h1,h2{font-family:var(--kop);margin:0;line-height:1.1;text-wrap:balance}
 .thema small{color:#5C6A8C;margin-left:auto;font-size:16px;white-space:nowrap}
 .thema em{font-style:normal;color:#5C6A8C;font-size:15px}
 .rij{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
-.rij button{background:var(--kaart);color:var(--inkt);border-radius:14px;padding:12px 16px}
+.rij button{background:var(--kaart);color:var(--inkt);border-radius:14px;padding:12px 16px;border:4px solid transparent}
+.rij button.gekozen{border-color:var(--knop)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -207,8 +208,11 @@ h1,h2{font-family:var(--kop);margin:0;line-height:1.1;text-wrap:balance}
   <p>De app gebruikt alleen letters en woordsoorten tot en met dit thema. Dieren daarna blijven op slot. Opbouw volgt Lijn 3, tweede editie (8 thema's).</p>
   <div class="themas" id="themas"></div>
   <h2>Geluid</h2>
-  <p>Woorden worden voorgelezen door de stem van dit apparaat. Hoor je niets, zet voorlezen dan uit. Dan blijven de oefeningen met plaatjes over.</p>
-  <div class="rij">
+  <p>Kies een opgenomen mannenstem of vrouwenstem, of de stem van dit apparaat. Hoor je niets, zet voorlezen dan uit. Dan blijven de oefeningen met plaatjes over.</p>
+  <div class="rij" id="soorten"></div>
+  <p id="stemuitleg">Stem van dit apparaat: kies hieronder welke het prettigst klinkt. Voor een natuurlijkere stem op iPad of iPhone: download een betere Nederlandse stem via Instellingen, Toegankelijkheid, Gesproken materiaal, Stemmen, Nederlands. Die verschijnt daarna in deze lijst.</p>
+  <div class="themas" id="stemmen"></div>
+  <div class="rij" style="margin-top:10px">
     <button id="test">Test de stem</button>
     <button id="stem"></button>
   </div>
@@ -264,28 +268,57 @@ const WOORDEN=LIJST.split(/\s+/).filter(Boolean).map(s=>{
 
 // ---------- Opslag (alleen op dit apparaat) ----------
 const SLEUTEL='letterreis-v2';
-let S={thema:3,best:{},sterren:0,stem:true,gezien:{}};
+let S={thema:3,best:{},sterren:0,stem:true,gezien:{},stemsoort:'man'};
 try{Object.assign(S,JSON.parse(localStorage.getItem(SLEUTEL)||'{}'))}catch(e){}
 const bewaar=()=>{try{localStorage.setItem(SLEUTEL,JSON.stringify(S))}catch(e){}};
 
 // ---------- Geluid ----------
-const kanPraten=()=>S.stem&&'speechSynthesis' in window;
-let spraak=0,laatste=null;
+const kanPraten=()=>S.stem&&('speechSynthesis' in window||!!window.GELUID);
+const nlStemmen=()=>{try{return speechSynthesis.getVoices().filter(v=>/^nl/i.test(v.lang))}catch(e){return []}};
+const stemScore=v=>(/premium/i.test(v.name)?8:0)+(/enhanced|verbeterd|natural|neural/i.test(v.name)?4:0)+(/nl[-_]NL/i.test(v.lang)?2:0)+(v.localService?0:1);
+function kiesStem(){
+  const l=nlStemmen();if(!l.length)return null;
+  return l.find(v=>v.name===S.stemNaam)||[...l].sort((a,b)=>stemScore(b)-stemScore(a))[0];
+}
+// Opgenomen stem (geluid.js) gaat voor; zonder opname leest de stem van het apparaat voor.
+let spraak=0,laatste=null,actx=null,bron=null;
+const buffers={};
+function ontgrendel(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}}
+document.addEventListener('pointerdown',ontgrendel,true);
+const opname=t=>S.stemsoort!=='apparaat'&&window.GELUID&&window.GELUID[t];
+let geladen='';
+function laadStem(){
+  if(S.stemsoort==='apparaat')return;
+  const src=S.stemsoort==='vrouw'?'geluid-vrouw.js':'geluid.js';
+  if(src===geladen)return;
+  const el=document.createElement('script');el.src=src;
+  el.onload=()=>{geladen=src;for(const k in buffers)delete buffers[k];if($('ouders').classList.contains('aan'))openOuders()};
+  document.head.appendChild(el);
+}
+function naarBuffer(b){const r=atob(b),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u.buffer}
+function stopGeluid(){try{if(bron){bron.onended=null;bron.stop()}}catch(e){}bron=null;try{speechSynthesis.cancel()}catch(e){}}
 function zeg(tekst,daarna){
   if(!kanPraten())return;
-  const id=++spraak;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(tekst);u.lang='nl-NL';
-    const v=speechSynthesis.getVoices().find(v=>/^nl/i.test(v.lang));if(v)u.voice=v;u.rate=.85;
-    if(daarna)u.onend=()=>setTimeout(()=>{if(id===spraak)zeg(daarna)},800);
-    laatste=u;speechSynthesis.speak(u)}catch(e){}
+  const id=++spraak;stopGeluid();
+  const na=()=>{if(daarna)setTimeout(()=>{if(id===spraak)zeg(daarna)},800)};
+  const data=opname(tekst);
+  if(data&&actx){
+    const speel=buf=>{if(id!==spraak)return;try{const b=actx.createBufferSource();b.buffer=buf;b.connect(actx.destination);b.onended=na;bron=b;b.start()}catch(e){}};
+    if(buffers[tekst])speel(buffers[tekst]);
+    else try{actx.decodeAudioData(naarBuffer(data),buf=>{buffers[tekst]=buf;speel(buf)},()=>{})}catch(e){}
+    return;
+  }
+  if(!('speechSynthesis' in window))return;
+  try{const u=new SpeechSynthesisUtterance(tekst);u.lang='nl-NL';
+    const v=kiesStem();if(v)u.voice=v;u.rate=.9;u.pitch=1.1;
+    u.onend=na;laatste=u;speechSynthesis.speak(u)}catch(e){}
 }
-const stil=()=>{spraak++;try{speechSynthesis.cancel()}catch(e){}};
-let ctx;
+const stil=()=>{spraak++;stopGeluid()};
 function toon(goed){
-  try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+  try{ontgrendel();const ctx=actx;
     (goed?[523,784]:[196]).forEach((f,i)=>{const o=ctx.createOscillator(),v=ctx.createGain();
       o.frequency.value=f;o.type=goed?'sine':'triangle';o.connect(v);v.connect(ctx.destination);
-      const t=ctx.currentTime+i*.12;v.gain.setValueAtTime(.18,t);v.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.26)})}catch(e){}
+      const t=ctx.currentTime+i*.12;v.gain.setValueAtTime(.12,t);v.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.26)})}catch(e){}
 }
 
 // ---------- Hulpjes ----------
@@ -499,17 +532,26 @@ function openOuders(){
   $('themas').innerHTML=THEMAS.map((t,i)=>`<button class="thema ${i+1===S.thema?'gekozen':''}" data-n="${i+1}">
     <b>${i+1}</b><span>${t.naam}<br><em>${t.soort}</em></span><small>${t.nieuw.join(' ')}</small></button>`).join('');
   $('stem').textContent='Voorlezen: '+(S.stem?'aan':'uit');
+  const op=S.stemsoort!=='apparaat';
+  $('soorten').innerHTML=[['man','Mannenstem'],['vrouw','Vrouwenstem'],['apparaat','Stem van dit apparaat']].map(([k,n])=>`<button data-soort="${k}" class="${S.stemsoort===k?'gekozen':''}">${n}</button>`).join('');
+  $('stemuitleg').hidden=$('stemmen').hidden=op;
+  const nu=kiesStem();
+  $('stemmen').innerHTML=nlStemmen().map(v=>`<button class="thema ${nu&&v.name===nu.name?'gekozen':''}" data-stem="${v.name.replace(/"/g,'&quot;')}"><span>${v.name}</span><small>${v.lang}</small></button>`).join('')||'<p>Dit apparaat heeft geen Nederlandse stem gevonden.</p>';
   toonScherm('ouders');
 }
 $('themas').addEventListener('click',e=>{const b=e.target.closest('.thema');if(!b)return;S.thema=+b.dataset.n;bewaar();openOuders()});
-$('test').onclick=()=>{const was=S.stem;S.stem=true;zeg('Hallo! Welk woord hoor je? boom');S.stem=was};
+$('stemmen').addEventListener('click',e=>{const b=e.target.closest('[data-stem]');if(!b)return;S.stemNaam=b.dataset.stem;bewaar();openOuders();
+  const was=S.stem;S.stem=true;zeg('Hallo Hailey! Welk woord hoor je?','boom');S.stem=was});
+$('soorten').addEventListener('click',e=>{const b=e.target.closest('[data-soort]');if(!b)return;S.stemsoort=b.dataset.soort;bewaar();stil();laadStem();openOuders()});
+$('test').onclick=()=>{const was=S.stem;S.stem=true;zeg('Hallo Hailey! Welk woord hoor je?','boom');S.stem=was};
 $('stem').onclick=()=>{S.stem=!S.stem;bewaar();openOuders()};
 let zeker=false;
 $('wis').onclick=()=>{if(!zeker){zeker=true;$('wis').textContent='Zeker weten? Tik nog een keer';return}
   S.best={};S.sterren=0;S.gezien={};bewaar();zeker=false;$('wis').textContent='Gewist';};
 $('dicht').onclick=()=>{$('hint').textContent='Kies een dier.';tekenThuis()};
 
-if('speechSynthesis' in window){try{speechSynthesis.getVoices()}catch(e){}}
+if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{if($('ouders').classList.contains('aan'))openOuders()}}catch(e){}}
+laadStem();
 tekenThuis();
 </script>
 </body>
