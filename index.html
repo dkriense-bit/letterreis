@@ -129,6 +129,33 @@ h1,h2{font-family:var(--kop);margin:0;line-height:1.1;text-wrap:balance}
 .vlieg{position:fixed;bottom:-40px;font-size:34px;pointer-events:none;z-index:9;animation:omhoog 1.3s ease-out forwards}
 @keyframes omhoog{to{transform:translateY(-105vh) rotate(260deg);opacity:.2}}
 
+/* oefenvormen uit het werkboek */
+.woord.klein{font-size:min(16vw,10vh,76px)}
+.vak.vast{border:4px solid var(--rand);background:#F7F9FD}
+.zin{font-size:clamp(26px,6.6vw,42px);font-weight:700;line-height:1.5;text-align:center;text-wrap:balance}
+.gat{display:inline-block;min-width:2.6em;height:1.25em;margin:0 .15em;vertical-align:-.2em;border-bottom:5px dashed #B9C3D8;padding:0 .2em}
+.gat.vol,.vak.vol{border-bottom-style:solid;border-color:var(--goed);color:#15824F;animation:plof .35s}
+.keus.zinoptie{flex-basis:100%;min-height:68px;font-size:clamp(24px,6vw,34px)}
+.keus.beeld.zes{flex:1 1 28%;min-height:min(92px,11vh)}
+.keus.gevonden{background:#E9F9F1;border-bottom-color:var(--goed);box-shadow:0 0 0 5px var(--goed);animation:spring .5s}
+.zoekveld{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:12px 14px;max-width:560px}
+.zoekding{background:#F4F7FD;font-size:clamp(28px,7vw,40px);font-weight:700;padding:6px 16px;border-radius:999px;border:4px dashed transparent;transform:rotate(var(--r,0));min-height:62px;transition:transform .15s}
+.zoekding.los{min-width:62px;padding:6px 0}
+.zoekding:active{transform:rotate(var(--r,0)) scale(.92)}
+.zoekding.gevonden{border:4px solid var(--goed);background:#E9F9F1;color:#15824F;animation:spring .5s}
+.zoekding.fout{animation:schud .3s}
+.bindveld{position:relative;display:flex;justify-content:space-between;width:100%;max-width:500px;gap:56px}
+#bindlijnen{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#bindlijnen path{fill:none;stroke:var(--goed);stroke-width:7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:teken .4s ease-out forwards}
+#bindlijnen circle{fill:var(--goed)}
+@keyframes teken{to{stroke-dashoffset:0}}
+.kolom{display:flex;flex-direction:column;justify-content:space-around;gap:14px;flex:1 1 0;max-width:190px}
+.bind{background:#F4F7FD;border-radius:20px;min-height:min(84px,12vh);font-size:clamp(28px,7.5vw,40px);font-weight:700;border:4px solid transparent;padding:4px 10px;position:relative;z-index:1}
+.bind.beeldje{font-size:clamp(42px,11vw,58px)}
+.bind.gekozen{border-color:var(--blauw);background:#EAF2FF;transform:scale(1.05)}
+.bind.klaar{border-color:var(--goed);background:#E9F9F1}
+.bind.fout{animation:schud .3s}
+
 /* film */
 .stip{flex:1;display:flex;gap:8px;justify-content:center}
 .stip i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.7);box-shadow:inset 0 2px 0 rgba(30,42,74,.15)}
@@ -304,6 +331,69 @@ const WOORDEN=LIJST.split(/\s+/).filter(Boolean).map(s=>{
   return {w:m[1],em:m[2]||'',lv:m[3]?Math.max(+m[3],letterNiveau(m[1])):niveau(m[1]),g:knip(m[1])};
 });
 
+// Zinnen zoals in het werkboek: *woord* is het woord dat de klas moet kiezen. Velden: zin | plaatje | 2 andere woorden | (niveau)
+const ZINLIJST=`ik eet *kaas*.|🧀|kaal|kaak
+de *roos* is daar.|🌹|rook|room
+de *maan* is daar.|🌙|maak|maal
+ik *lees*.|📖|lek|leek
+de *kat* eet.|🐱|kam|kip
+de *koe* is moe.|🐄|koek|toe
+de *bal* is wit.|⚽|bel|bak
+het *ei* is wit.|🥚|eik|eis
+de *poes* is moe.|🐈|poot|boos
+ik eet *soep*.|🍲|boek|koek
+de *boot* is wit.|⛵|boom|boos
+de *aap* eet.|🐒|aas|raap
+de *bus* is wit.|🚌|bos|mus
+ik pak de *pen*.|🖊️|pan|pet
+ik eet een *koek*.|🍪|boek|kook
+de *kip* pikt.|🐔|kin|pit
+de *boom* is dik.|🌳|boot|bom
+de *mus* pikt.|🐦|bus|mes
+de *vis* is nat.|🐟|vos|vies
+de *vos* is lief.|🦊|vis|bos
+de *muis* eet kaas.|🐭|huis|buis
+het *huis* is groot.|🏠|muis|buik
+de *uil* is wijs.|🦉|ui|uit
+ik eet een *ijs*.|🍦|eis|reis
+de *geit* eet gras.|🐐|feit|gein
+de *haas* rent.|🐇|kaas|haar
+de *bij* is geel.|🐝|bijl|wij
+de *fiets* is van mij.|🚲|niets|iets
+de *pauw* is blauw.|🦚|dauw|gauw
+de *zon* is geel.|☀️|zoon|ton
+het *schaap* is wit.|🐑|schaar|schip
+de *jas* is blauw.|🧥|jam|kas
+de *slang* is lang.|🐍|slank|sla
+het *vuur* is heet.|🔥|muur|vuil
+de *bank* is zacht.|🛋️|bang|bak
+ik zie de *zee*.|🌊|zeep|zes
+het *touw* is lang.|🪢|trouw|dauw
+het *schip* is groot.|🚢|schep|schop
+de *ring* is van mij.|💍|kring|rijk
+de *hond* rent.|🐶|hand|mond
+ik eet *brood*.|🍞|rood|bord
+het *paard* rent.|🐴|baard|paars
+de *strik* is rood.|🎀|strak|stok
+de *eend* zwemt.|🦆|been|heet
+de *haai* zwemt.|🦈|hooi|haar
+de *beer* is bruin.|🐻|peer|bier
+de *deur* is dicht.|🚪|duur|deuk
+de *appel* is rood.|🍎|lepel|kapel|6
+de *kraai* is zwart.|🐦|kraan|haai
+de *leeuw* is boos.|🦁|meeuw|leeg|7
+de *vogel* fluit.|🐦|kogel|vork|7
+het *konijn* eet sla.|🐰|koning|kanon|7
+de *banaan* is geel.|🍌|tomaat|ananas|7`;
+const ZICHT={de:1,een:1,het:2,ik:1,is:1};
+const ZINNEN=ZINLIJST.split('\n').map(r=>{
+  const [z,em,a1,a2,lv]=r.split('|');
+  const delen=z.split('*'),tekst=delen.join('');
+  const woorden=(tekst+' '+a1+' '+a2).replace(/[.!?,]/g,'').split(' ');
+  return {tekst,em,gat:delen[1],voor:delen[0],na:delen[2],alt:[a1,a2],
+    lv:Math.max(lv?+lv:0,...woorden.map(w=>ZICHT[w]||niveau(w)))};
+});
+
 // ---------- Opslag (alleen op dit apparaat) ----------
 const SLEUTEL='letterreis-v2';
 let S={thema:3,best:{},sterren:0,stem:true,gezien:{},letters:{},stemsoort:'man'};
@@ -448,6 +538,21 @@ const AANTAL=10;
 // plaatjes die een kind maar op één manier noemt (voor 'welk plaatje begint met deze letter')
 const HELDER=new Set('boom maan kaas roos raam mier boot noot bal sok pen bus kip pan bel boek koek soep koe ei aap wiel geit oog neus fiets pauw wolk wolf ster stoel trein tent lamp klok bril broek melk berg brug spin slak kers taart friet mug kroon nest ijs bij vis vos huis muis uil ui duif duim zon zee zeep schaap schoen schaar vuur vork vlag vlieg zwaan pijl voet jas jurk slang tong touw hout zout krant plant bed bad web hond hand tand hoed brood eend paard blad strik worst zwaard bord beer peer deur oor veer haai appel water vogel kikker lepel sleutel banaan tijger vlinder toren tomaat emmer ladder leeuw sneeuw'.split(' '));
 let R,recent=[];
+const MEDE=['l','k','t','m','n','r','s','d','p','b','w','h','g','f','v','j','z'];
+const LIJKT_OP={b:['d','p'],d:['b','p'],p:['b','d'],n:['m','h'],m:['n','w'],h:['n','k'],l:['i','t'],t:['l','f'],k:['h','t'],r:['n','v'],s:['z','r'],z:['s','r'],v:['w','f'],w:['v','m'],f:['t','v'],g:['j','p'],j:['g','i']};
+const HOORLET=['l','m','n','r','k','t','p','b','d','w','j','h'];
+const PAREN={a:'aa',aa:'a',e:'ee',ee:'e',o:'oo',oo:'o',u:'uu',uu:'u',i:'ie',ie:'i',ei:'ij',ij:'ei',au:'ou',ou:'au'};
+const uniekEm=l=>{const z=new Set();return l.filter(w=>!z.has(w.em)&&z.add(w.em))};
+// woorden die maar één letter verschillen (kool/kook, lak/lik)
+function eenVerschil(a,b){
+  const x=a.g,y=b.g;
+  if(x.length===y.length)return x.filter((g,i)=>g!==y[i]).length===1;
+  if(Math.abs(x.length-y.length)!==1)return false;
+  const [k,l]=x.length<y.length?[x,y]:[y,x];
+  for(let i=0;i<l.length;i++)if(k.every((g,j)=>g===l[j<i?j:j+1]))return true;
+  return false;
+}
+const klinkerPlek=(w,n)=>w.g.findIndex(g=>PAREN[g]&&NIVEAU[g]<=n&&NIVEAU[PAREN[g]]<=n);
 function maakRonde(n){
   const pool=WOORDEN.filter(w=>w.lv<=n);
   let focus=pool.filter(w=>w.lv===n);if(focus.length<AANTAL)focus=pool.filter(w=>w.lv>=n-2);
@@ -460,11 +565,53 @@ function maakRonde(n){
   if(kanPraten()||plaatjes.length>=6)soorten.push('bouw');
   if(plaatjes.length>=6)soorten.push('kiesplaat');
   if(plaatjes.filter(w=>HELDER.has(w.w)).length>=6)soorten.push('letterplaat');
+  const nieuwL=THEMAS[n-1].nieuw;
+  const zinnen=ZINNEN.filter(z=>z.lv<=n);
+  if(zinnen.length>=3)soorten.push('zin','zinkies');
+  if(plaatjes.length>=8)soorten.push('verbind');
+  if(plaatjes.filter(w=>klinkerPlek(w,n)>=0).length>=4)soorten.push('klinker');
+  if(MEDE.filter(l=>NIVEAU[l]<=n).length>=3)soorten.push('zoek');
+  if(kanPraten())soorten.push('hoorplaat');
   if(!soorten.length)soorten.push('plaat');
+  const voorkeur=l=>schud(l.filter(x=>nieuwL.includes(x))).concat(schud(l.filter(x=>!nieuwL.includes(x))));
+  const SPECIAAL={
+    zin(){const z=kies(zinnen.filter(z=>!gebruikt.has(z.tekst)&&z.lv>=n-1).concat(zinnen.filter(z=>!gebruikt.has(z.tekst))));
+      if(!z)return null;return {soort:'zin',z,doel:{w:z.tekst},opties:schud([z.gat,...z.alt]),juist:z.gat,zeg:z.tekst}},
+    zinkies(){const z=kies(zinnen.filter(z=>!gebruikt.has(z.tekst)&&z.lv>=n-1).concat(zinnen.filter(z=>!gebruikt.has(z.tekst))));
+      if(!z)return null;const zin=w=>z.voor+w+z.na;
+      return {soort:'zinkies',z,doel:{w:z.tekst},opties:schud([z.gat,...z.alt].map(zin)),juist:z.tekst,zeg:z.tekst}},
+    klinker(){const k=schud(plaatjes.filter(w=>klinkerPlek(w,n)>=0&&!gebruikt.has(w.w)&&w.g.length<=5));
+      const w=k.find(w=>focus.includes(w))||k[0];if(!w)return null;const plek=klinkerPlek(w,n);
+      return {soort:'klinker',doel:w,plek,opties:schud([w.g[plek],PAREN[w.g[plek]]])}},
+    verbind(){const k=uniekEm(schud(pool.filter(w=>w.em&&!gebruikt.has(w.w)&&w.g.length<=6)));
+      if(k.length<3)return null;const p=k.slice(0,3);
+      return {soort:'verbind',doel:{w:p[0].w},links:schud(p),rechts:schud(p),over:3,zeg:null}},
+    zoek(){
+      for(const t of voorkeur(MEDE.filter(l=>NIVEAU[l]<=n))){
+        const kort=pool.filter(w=>w.g.length<=4);
+        const met=schud(kort.filter(w=>w.g.includes(t)&&!w.g.some(g=>g!==t&&g.includes(t)))).slice(0,3);
+        const zonder=schud(kort.filter(w=>!w.w.includes(t))).slice(0,3);
+        if(met.length<3||zonder.length<3)continue;
+        const lijk=(LIJKT_OP[t]||[]).slice(0,2);
+        const items=[...met.map(w=>({t:w.w,ok:1})),...zonder.map(w=>({t:w.w,ok:0})),{t,ok:1},{t,ok:1},...lijk.map(x=>({t:x,ok:0}))];
+        return {soort:'zoek',doel:{w:'zoek-'+t},letter:t,items:schud(items),over:items.filter(i=>i.ok).length,zeg:null};
+      }
+      return null},
+    hoorplaat(){
+      const pl=uniekEm(schud(plaatjes.filter(w=>HELDER.has(w.w)&&!/[db]$/.test(w.w))));
+      for(const t of voorkeur(HOORLET.filter(l=>NIVEAU[l]<=n))){
+        const met=pl.filter(w=>w.g.includes(t)),zonder=pl.filter(w=>!w.w.includes(t));
+        if(met.length<2||zonder.length<3)continue;
+        const nm=Math.min(met.length,kies([2,3])),keus=[...met.slice(0,nm),...zonder.slice(0,6-nm)];
+        return {soort:'hoorplaat',doel:{w:'hoor-'+t},letter:t,beelden:schud(keus),goedSet:new Set(met.slice(0,nm).map(w=>w.w)),over:nm,zeg:null};
+      }
+      return null}
+  };
   const volgorde=[];while(volgorde.length<AANTAL)volgorde.push(...schud(soorten));
   const gebruikt=new Set(pool.length>=40?recent:[]),vragen=[];
   for(let i=0;i<AANTAL;i++){
-    const soort=volgorde[i];
+    let soort=volgorde[i];
+    if(SPECIAAL[soort]){const v=SPECIAAL[soort]();if(v){vragen.push(v);gebruikt.add(v.doel.w);continue}soort=plaatjes.length>=6?'plaat':'hoor'}
     const beeld=soort==='plaat'||soort==='kiesplaat'||soort==='letterplaat';
     const past=w=>((!beeld&&kanPraten())||w.em)&&(soort!=='letterplaat'||HELDER.has(w.w))&&(soort!=='bouw'||w.g.length<=(n>=6?7:5));
     let kand=focus.filter(w=>past(w)&&!gebruikt.has(w.w));
@@ -498,7 +645,7 @@ function maakRonde(n){
   recent=[...recent,...vragen.map(v=>v.doel.w)].slice(-20);
   return vragen;
 }
-const lijkt=(a,b)=>(a.g[0]===b.g[0]?2:0)+(a.g.length===b.g.length?1:0)+(a.g[a.g.length-1]===b.g[b.g.length-1]?1:0)+Math.random();
+const lijkt=(a,b)=>(eenVerschil(a,b)?6:0)+(a.g[0]===b.g[0]?2:0)+(a.g.length===b.g.length?1:0)+(a.g[a.g.length-1]===b.g[b.g.length-1]?1:0)+Math.random();
 
 // ---------- Filmpjes: weetjes en letterfilmpjes ----------
 const FILM=[
@@ -570,7 +717,9 @@ function start(n){
 function begin(n){tekenWereld(n);R={n,vragen:maakRonde(n),i:0,score:0,uit:[]};toonScherm('spel');vraag()}
 const OPDRACHT={hoor:'Welk woord hoor je?',plaat:'Welk woord past bij het plaatje?',klank:'Wat hoor je vooraan?',bouw:'Maak het woord.',
   kiesplaat:'Welk plaatje past bij het woord?',letterplaat:'Welk plaatje begint met deze letter?'};
-const METWOORD={hoor:1,klank:1,bouw:1};
+Object.assign(OPDRACHT,{klinker:'Welke klank mist er?',zoek:'Tik alles met deze letter.',hoorplaat:'In welke plaatjes hoor je deze letter?',
+  verbind:'Verbind het woord met het plaatje.',zin:'Welk woord past in de zin?',zinkies:'Welke zin past bij het plaatje?'});
+const METWOORD={hoor:1,klank:1,bouw:1,klinker:1};
 function zegVraag(){const v=R.vragen[R.i];zeg(OPDRACHT[v.soort],METWOORD[v.soort]?v.doel.w:null)}
 function zegWeer(){const v=R.vragen[R.i];zeg(METWOORD[v.soort]?v.doel.w:OPDRACHT[v.soort])}
 $('weer').onclick=zegWeer;
@@ -586,17 +735,63 @@ function vraag(){
   else if(v.soort==='klank')boven=beeld;
   else if(v.soort==='kiesplaat')boven=`<div class="woord">${v.doel.w}</div>`;
   else if(v.soort==='letterplaat')boven=`<div class="woord">${v.doel.g[0]}</div>`;
+  else if(v.soort==='klinker')boven=`<div class="plaat">${v.doel.em}</div><div class="vakjes">${v.doel.g.map((g,i)=>i===v.plek?'<span class="vak" id="gat"></span>':`<span class="vak vast">${g}</span>`).join('')}</div>`;
+  else if(v.soort==='zin')boven=`<div class="plaat">${v.z.em}</div><div class="zin">${v.z.voor}<span class="gat" id="gat"></span>${v.z.na}</div>`;
+  else if(v.soort==='zinkies')boven=`<div class="plaat">${v.z.em}</div>`;
+  else if(v.soort==='hoorplaat')boven=`<div class="woord">${v.letter}</div>`;
+  else if(v.soort==='zoek')boven=`<div class="woord klein">${v.letter}</div><div class="zoekveld">${v.items.map(i=>`<button class="zoekding ${i.t.length<3?'los':''}" data-ok="${i.ok}" style="--r:${Math.round(Math.random()*12-6)}deg">${i.t}</button>`).join('')}</div>`;
+  else if(v.soort==='verbind')boven=`<div class="bindveld" id="bindveld"><svg id="bindlijnen" aria-hidden="true"></svg>
+    <div class="kolom">${v.links.map(w=>`<button class="bind woordje" data-kant="w" data-w="${w.w}">${w.w}</button>`).join('')}</div>
+    <div class="kolom">${v.rechts.map(w=>`<button class="bind beeldje" data-kant="p" data-w="${w.w}" aria-label="${w.w}">${w.em}</button>`).join('')}</div></div>`;
   else boven=beeld+`<div class="vakjes">${v.doel.g.map(()=>'<span class="vak"></span>').join('')}</div>`;
   $('vraag').innerHTML=boven;
   if(v.soort==='bouw'){v.plek=0;$('keuzes').innerHTML=v.tegels.map(t=>`<button class="keus tegel" data-t="${t}">${t}</button>`).join('')}
-  else if(v.beelden)$('keuzes').innerHTML=v.beelden.map(w=>`<button class="keus beeld" data-o="${w.w}" aria-label="${w.w}">${w.em}</button>`).join('');
+  else if(v.soort==='zoek'||v.soort==='verbind')$('keuzes').innerHTML='';
+  else if(v.soort==='zinkies')$('keuzes').innerHTML=v.opties.map(o=>`<button class="keus zinoptie" data-o="${o}">${o}</button>`).join('');
+  else if(v.beelden)$('keuzes').innerHTML=v.beelden.map(w=>`<button class="keus beeld${v.beelden.length>3?' zes':''}" data-o="${w.w}" aria-label="${w.w}">${w.em}</button>`).join('');
   else $('keuzes').innerHTML=v.opties.map(o=>`<button class="keus" data-o="${o}">${o}</button>`).join('');
   zegVraag();
 }
-$('vraag').addEventListener('click',e=>{if(e.target.closest('[data-weer]'))zegWeer()});
+$('vraag').addEventListener('click',e=>{
+  if(e.target.closest('[data-weer]')){zegWeer();return}
+  if(!R||R.wacht)return;const v=R.vragen[R.i];
+  const z=e.target.closest('.zoekding');
+  if(z&&v.soort==='zoek'&&!z.disabled){
+    if(z.dataset.ok==='1'){z.classList.add('gevonden');z.disabled=true;v.over--;if(!v.over)goed();else toon(true)}else mis(z,false);
+    return;
+  }
+  const k=e.target.closest('.bind');
+  if(k&&v.soort==='verbind'&&!k.disabled)kiesBind(v,k);
+});
+function kiesBind(v,k){
+  const sel=document.querySelector('.bind.gekozen');
+  if(!sel||sel===k){k.classList.toggle('gekozen');if(k.dataset.kant==='p')zeg(k.dataset.w);return}
+  if(sel.dataset.kant===k.dataset.kant){sel.classList.remove('gekozen');k.classList.add('gekozen');if(k.dataset.kant==='p')zeg(k.dataset.w);return}
+  sel.classList.remove('gekozen');
+  if(sel.dataset.w===k.dataset.w){
+    lijn(sel,k);[sel,k].forEach(x=>{x.classList.add('klaar');x.disabled=true});
+    v.over--;if(!v.over)goed();else{toon(true);zeg(k.dataset.w)}
+  }else mis(k,false);
+}
+function lijn(a,b){
+  const r0=$('bindveld').getBoundingClientRect(),ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect();
+  const [l,r]=ra.left<rb.left?[ra,rb]:[rb,ra];
+  const x1=l.right-r0.left,y1=l.top+l.height/2-r0.top,x2=r.left-r0.left,y2=r.top+r.height/2-r0.top;
+  $('bindlijnen').insertAdjacentHTML('beforeend',`<path class="lijntje" d="M${x1} ${y1} C${(x1+x2)/2} ${y1} ${(x1+x2)/2} ${y2} ${x2} ${y2}" pathLength="1"/><circle cx="${x1}" cy="${y1}" r="7"/><circle cx="${x2}" cy="${y2}" r="7"/>`);
+}
 $('keuzes').addEventListener('click',e=>{
   const b=e.target.closest('.keus');if(!b||b.disabled||R.wacht)return;
   const v=R.vragen[R.i];
+  if(v.soort==='hoorplaat'){
+    zeg(b.dataset.o);
+    if(v.goedSet.has(b.dataset.o)){b.classList.add('gevonden');b.disabled=true;v.over--;if(!v.over)goed();else toon(true)}else mis(b,true);
+    return;
+  }
+  if(v.soort==='klinker'||v.soort==='zin'||v.soort==='zinkies'){
+    const juist=v.soort==='klinker'?v.doel.g[v.plek]:v.juist;
+    if(b.dataset.o===juist){b.classList.add('goed');const g=$('gat');if(g){g.textContent=b.dataset.o;g.classList.add('vol')}goed()}else mis(b,true);
+    return;
+  }
   if(v.soort==='bouw'){
     if(b.dataset.t===v.doel.g[v.plek]){
       const vak=document.querySelectorAll('.vak')[v.plek];vak.textContent=b.dataset.t;vak.classList.add('vol');
@@ -615,8 +810,9 @@ function goed(){
   R.uit[R.i]=!v.mis;
   if(!v.mis){R.score++;sterrenregen(6);const t=$('ronde');t.textContent=R.score;const p=t.parentNode;p.classList.remove('tel');void p.offsetWidth;p.classList.add('tel')}
   $('vul').style.width=((R.i+1)/AANTAL*100)+'%';
-  if(v.soort!=='hoor')setTimeout(()=>zeg(v.doel.w),250);
-  setTimeout(()=>{R.wacht=false;R.i++;if(R.i<R.vragen.length)vraag();else klaar()},1300);
+  const na=('zeg' in v)?v.zeg:(v.soort!=='hoor'?v.doel.w:null);
+  if(na)setTimeout(()=>zeg(na),250);
+  setTimeout(()=>{R.wacht=false;R.i++;if(R.i<R.vragen.length)vraag();else klaar()},v.z?2800:v.soort==='verbind'||v.soort==='zoek'||v.soort==='hoorplaat'?1700:1300);
 }
 function klaar(){
   S.sterren+=R.score;S.best[R.n]=Math.max(S.best[R.n]||0,R.score);bewaar();
