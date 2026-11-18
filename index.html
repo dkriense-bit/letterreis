@@ -220,7 +220,7 @@ h1,h2{font-family:var(--kop);margin:0;line-height:1.1;text-wrap:balance}
 
 <section id="thuis" class="scherm aan">
   <div class="balk">
-    <div class="titel"><div class="pim"></div><h1>Haileys letterreis</h1><small style="margin-left:auto;color:var(--zacht);font-size:13px;flex:0 0 auto">v5</small></div>
+    <div class="titel"><div class="pim"></div><h1>Haileys letterreis</h1><small style="margin-left:auto;color:var(--zacht);font-size:13px;flex:0 0 auto">v6</small></div>
     <div class="pot" aria-label="Sterren"><span id="totaal">0</span></div>
     <button class="rond" id="tandwiel" aria-label="Voor ouders: houd ingedrukt">⚙️</button>
   </div>
@@ -280,7 +280,7 @@ h1,h2{font-family:var(--kop);margin:0;line-height:1.1;text-wrap:balance}
       <button id="test">Test de stem</button>
       <button id="stem"></button>
     </div>
-    <p id="versie" style="margin:14px 0 0;font-weight:700;color:var(--inkt)">Versie 5, 18 november: met de oefeningen uit het werkboek</p>
+    <p id="versie" style="margin:14px 0 0;font-weight:700;color:var(--inkt)">Versie 6, 18 november: zinnen kloppen met de plaatjes</p>
     <h2>Opnieuw beginnen</h2>
     <div class="rij"><button id="wis">Wis alle sterren</button></div>
   </div>
@@ -317,15 +317,15 @@ function niveau(w){
   return n;
 }
 // woord + plaatje; ":9" = niveau met de hand gezet (langere woorden)
-const LIJST=`kaas🧀 ren🏃 een1️⃣ nee🙅 eet🍽️ slee🛷 mist🌫️ tik lees tel les raak mee meet deel keel mis min dit til rit maar taal kaal toon room daar naar raar ik is in en er ken nek kin dik sik aas
-boom🌳 maan🌙 been🦵 kat🐱 das🧣 tas👜 bes🫐 mes raam🪟 mier🐜 tien🔟 boot⛵ roos🌹 noot🥜 man👨 kam tak dak mat net bak dier riem rook aan teen
-bal⚽ sok🧦 pen🖊️ bus🚌 hut🛖 pet🧢 kip🐔 pan🍳 pil💊 pot🍯 mok☕ kom🥣 bel🔔 boek📖 koek🍪 soep🍲 koe🐄 poes🐈 ei🥚 bot🦴 aap🐒 haas🐇 poot🐾 sap🧃 doos📦 bos🌲 lip👄 hek hok rok kop reis hoek doek heel haar tol hak lap top map put lus
-weg🛣️ wiel🛞 geit🐐 oog👁️ neus👃 fiets🚲 pauw🦚 wol🧶 wolk☁️ wolf🐺 ster⭐ stoel🪑 step🛴 trein🚆 tent⛺ lamp💡 klok🕰️ bril👓 broek👖 melk🥛 berg⛰️ brug🌉 spin🕷️ slak🐌 kers🍒 taart🎂 friet🍟 snoep🍬 film🎬 fee🧚 mug🦟 big🐖 kroon👑 feest🎉 hert🦌 kerk⛪ nest🪺 arm💪 draak🐉 prins🤴 hart❤️ gras glas fles groen blauw geel reus leuk gek gat kast kist post trap traan blok
-ijs🍦 bij🐝 vis🐟 vos🦊 huis🏠 muis🐭 uil🦉 ui🧅 duif🕊️ duim👍 tuin🌷 zon☀️ zee🌊 zeep🧼 zes6️⃣ vijf5️⃣ vier4️⃣ schaap🐑 schip🚢 schoen👟 schaar✂️ school🏫 vuur🔥 muur🧱 vork🍴 vlag🚩 vlieg🪰 zwaan🦢 vlees🥩 rijst🍚 pijl🏹 voet🦶 vaas🏺 zoen😘 trui fluit buik zak zus zin zit uur lijm fijn vuil schep schat
-jas🧥 jurk👗 juf👩‍🏫 bank🛋️ ring💍 slang🐍 tong👅 nacht🌃 lach😄 acht8️⃣ vrouw👩 touw🪢 hout🪵 zout🧂 krant📰 plant🪴 bang😨 jam jong lang eng vink plank licht lucht mouw fout stout kous kring
-bed🛏️ bad🛁 web🕸️ hond🐶 hand✋ mond👄 tand🦷 hoed🎩 brood🍞 eend🦆 paard🐴 blad🍃 rood🔴 goud🥇 koud🥶 strik🎀 worst🌭 herfst🍂 zwaard🗡️ strand🏖️ wind💨 kind🧒 held🦸 bord🍽️ baard🧔 lied🎵 straat markt struik geld
-beer🐻 peer🍐 deur🚪 oor👂 veer🪶 kleur🎨 haai🦈 roei🚣 groei🌱 zwaai👋 spoor🛤️ mooi kooi hooi kraai draai boor koor geur vloer
-voetbal⚽:4 huisje🏠:5 visje🐟:5 boompje🌳:5 bootje⛵:5 geluk🍀:6 gezin👪:6 ijsbeer🐻‍❄️:6 zeepbel🫧:4 zakdoek:4 verhaal:6 bezoek:6 fietsbel:4 tuinhek:4
+const LIJST=`kaas🧀 ren een nee eet slee🛷 mist tik lees tel les raak mee meet deel keel mis min dit til rit maar taal kaal toon room daar naar raar ik is in en er ken nek kin dik sik aas
+boom🌳 maan🌙 been🦵 kat🐱 das🧣 tas👜 bes mes raam🪟 mier🐜 tien🔟 boot⛵ roos🌹 noot🥜 man👨 kam tak dak mat net bak dier riem rook aan teen
+bal⚽ sok🧦 pen🖊️ bus🚌 hut pet🧢 kip🐔 pan🍳 pil💊 pot mok kom🥣 bel🔔 boek📖 koek🍪 soep🍲 koe🐄 poes🐈 ei🥚 bot🦴 aap🐒 haas🐇 poot🐾 sap🧃 doos📦 bos lip hek hok rok kop reis hoek doek heel haar tol hak lap top map put lus
+weg wiel🛞 geit🐐 oog👁️ neus👃 fiets🚲 pauw🦚 wol🧶 wolk☁️ wolf🐺 ster⭐ stoel🪑 step🛴 trein🚆 tent⛺ lamp💡 klok🕰️ bril👓 broek👖 melk🥛 berg⛰️ brug🌉 spin🕷️ slak🐌 kers🍒 taart🎂 friet🍟 snoep🍬 film fee🧚 mug🦟 big🐖 kroon👑 feest hert🦌 kerk⛪ nest🪺 arm💪 draak🐉 prins hart❤️ gras glas fles groen blauw geel reus leuk gek gat kast kist post trap traan blok
+ijs🍦 bij🐝 vis🐟 vos🦊 huis🏠 muis🐭 uil🦉 ui🧅 duif🕊️ duim👍 tuin zon☀️ zee🌊 zeep🧼 zes6️⃣ vijf5️⃣ vier4️⃣ schaap🐑 schip🚢 schoen👟 schaar✂️ school vuur🔥 muur🧱 vork🍴 vlag🚩 vlieg🪰 zwaan🦢 vlees🥩 rijst🍚 pijl🏹 voet🦶 vaas🏺 zoen trui fluit buik zak zus zin zit uur lijm fijn vuil schep schat
+jas🧥 jurk👗 juf👩‍🏫 bank🛋️ ring💍 slang🐍 tong👅 nacht lach acht8️⃣ vrouw👩 touw🪢 hout🪵 zout🧂 krant📰 plant🪴 bang jam jong lang eng vink plank licht lucht mouw fout stout kous kring
+bed🛏️ bad🛁 web🕸️ hond🐶 hand✋ mond tand🦷 hoed🎩 brood🍞 eend🦆 paard🐴 blad🍃 rood goud🥇 koud strik🎀 worst🌭 herfst zwaard🗡️ strand🏖️ wind kind🧒 held bord🍽️ baard🧔 lied straat markt struik geld
+beer🐻 peer🍐 deur🚪 oor👂 veer🪶 kleur haai🦈 roei groei zwaai spoor mooi kooi hooi kraai draai boor koor geur vloer
+voetbal:4 huisje:5 visje:5 boompje:5 bootje:5 geluk:6 gezin:6 ijsbeer🐻‍❄️:6 zeepbel🫧:4 zakdoek:4 verhaal:6 bezoek:6 fietsbel:4 tuinhek:4
 leeuw🦁 sneeuw❄️ nieuw duw appel🍎:6 water💧:7 vogel🐦:7 kikker🐸:6 lepel🥄:7 sleutel🔑:6 konijn🐰:7 banaan🍌:7 tijger🐯:7 vlinder🦋:6 toren🗼:7 tomaat🍅:7 emmer🪣:6 ladder🪜:6 koning🤴:7 tafel:7 zomer:7 winter:6 letter:6 kamer:7 bakker:6 dokter:6`;
 const WOORDEN=LIJST.split(/\s+/).filter(Boolean).map(s=>{
   const m=s.match(/^([a-z]+)([^:]*)(?::(\d+))?$/);
@@ -337,54 +337,51 @@ const ZINLIJST=`ik eet *kaas*.|🧀|kaal|kaak
 de *roos* is daar.|🌹|rook|room
 de *maan* is daar.|🌙|maak|maal
 ik *lees*.|📖|lek|leek
-de *kat* eet.|🐱|kam|kip
-de *koe* is moe.|🐄|koek|toe
-de *bal* is wit.|⚽|bel|bak
+dit is een *kat*.|🐱|kam|kip
+dit is een *koe*.|🐄|koek|kok
+dit is een *bal*.|⚽|bel|bak
 het *ei* is wit.|🥚|eik|eis
-de *poes* is moe.|🐈|poot|boos
+dit is een *poes*.|🐈|poot|roos
 ik eet *soep*.|🍲|boek|koek
-de *boot* is wit.|⛵|boom|boos
-de *aap* eet.|🐒|aas|raap
-de *bus* is wit.|🚌|bos|mus
+dit is een *boot*.|⛵|boom|bot
+dit is een *aap*.|🐒|aas|raap
+dit is een *bus*.|🚌|bos|mus
 ik pak de *pen*.|🖊️|pan|pet
 ik eet een *koek*.|🍪|boek|kook
-de *kip* pikt.|🐔|kin|pit
-de *boom* is dik.|🌳|boot|bom
-de *mus* pikt.|🐦|bus|mes
-de *vis* is nat.|🐟|vos|vies
-de *vos* is lief.|🦊|vis|bos
-de *muis* eet kaas.|🐭|huis|buis
-het *huis* is groot.|🏠|muis|buik
-de *uil* is wijs.|🦉|ui|uit
+dit is een *kip*.|🐔|kin|pit
+dit is een *boom*.|🌳|boot|bom
+dit is een *vis*.|🐟|vos|vies
+dit is een *vos*.|🦊|vis|bos
+dit is een *muis*.|🐭|huis|buis
+dit is een *huis*.|🏠|muis|buik
+dit is een *uil*.|🦉|ui|uit
 ik eet een *ijs*.|🍦|eis|reis
-de *geit* eet gras.|🐐|feit|gein
-de *haas* rent.|🐇|kaas|haar
+dit is een *geit*.|🐐|feit|gein
+dit is een *haas*.|🐇|kaas|haar
 de *bij* is geel.|🐝|bijl|wij
-de *fiets* is van mij.|🚲|niets|iets
-de *pauw* is blauw.|🦚|dauw|gauw
+dit is een *fiets*.|🚲|niets|iets
+dit is een *pauw*.|🦚|dauw|gauw
 de *zon* is geel.|☀️|zoon|ton
 het *schaap* is wit.|🐑|schaar|schip
-de *jas* is blauw.|🧥|jam|kas
-de *slang* is lang.|🐍|slank|sla
+dit is een *jas*.|🧥|jam|kas
+dit is een *slang*.|🐍|slank|sla
 het *vuur* is heet.|🔥|muur|vuil
-de *bank* is zacht.|🛋️|bang|bak
 ik zie de *zee*.|🌊|zeep|zes
-het *touw* is lang.|🪢|trouw|dauw
-het *schip* is groot.|🚢|schep|schop
-de *ring* is van mij.|💍|kring|rijk
-de *hond* rent.|🐶|hand|mond
+dit is een *touw*.|🪢|trouw|dauw
+dit is een *schip*.|🚢|schep|schop
+dit is een *ring*.|💍|kring|rijk
+dit is een *hond*.|🐶|hand|mond
 ik eet *brood*.|🍞|rood|bord
-het *paard* rent.|🐴|baard|paars
-de *strik* is rood.|🎀|strak|stok
-de *eend* zwemt.|🦆|been|heet
-de *haai* zwemt.|🦈|hooi|haar
-de *beer* is bruin.|🐻|peer|bier
-de *deur* is dicht.|🚪|duur|deuk
+dit is een *paard*.|🐴|baard|kaart
+dit is een *strik*.|🎀|stok|stip
+dit is een *eend*.|🦆|been|eind
+dit is een *haai*.|🦈|hooi|haar
+dit is een *beer*.|🐻|peer|bier
+dit is een *deur*.|🚪|duur|deuk
 de *appel* is rood.|🍎|lepel|kapel|6
-de *kraai* is zwart.|🐦|kraan|haai
-de *leeuw* is boos.|🦁|meeuw|leeg|7
-de *vogel* fluit.|🐦|kogel|vork|7
-het *konijn* eet sla.|🐰|koning|kanon|7
+dit is een *leeuw*.|🦁|meeuw|eeuw|7
+dit is een *vogel*.|🐦|kogel|vork|7
+dit is een *konijn*.|🐰|koning|kanon|7
 de *banaan* is geel.|🍌|tomaat|ananas|7`;
 const ZICHT={de:1,een:1,het:2,ik:1,is:1};
 const ZINNEN=ZINLIJST.split('\n').map(r=>{
